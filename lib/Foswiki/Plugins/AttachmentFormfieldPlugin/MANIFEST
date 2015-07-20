@@ -1,0 +1,6 @@
+!noci
+data/System/AttachmentFormfieldPlugin.txt 0644 Documentation page
+lib/Foswiki/Plugins/AttachmentFormfieldPlugin.pm 0444 Perl module
+lib/Foswiki/Plugins/AttachmentFormfieldPlugin/Config.spec 0444 Configuration
+lib/Foswiki/Form/Attachment.pm 0444
+pub/System/AttachmentFormfieldPlugin/upload.js 0444
