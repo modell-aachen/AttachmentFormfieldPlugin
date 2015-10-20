@@ -93,39 +93,16 @@ jQuery(function($) {
         var $this = $(this);
 
         var $span = $this.closest('span.attachmentField');
-        var $input = $span.find('input[name="File"]');
-
-        // save old value for undoing
-        var oldVal = $input.val();
-        if(!oldVal) return false;
-
+        var $input = $span.find('input');
+				
+		
         $input.val('');
 
         $this.closest('.jqButton').hide();
-        $span.find('.undoClearFile').attr('oldVal', oldVal).closest('.jqButton').show();
 
         return false;
     });
-
-    // undo clear button
-    $('span.attachmentField .undoClearFile').click(function() {
-        var $this = $(this);
-
-        var $span = $this.closest('span.attachmentField');
-        var $input = $span.find('input[name="File"]');
-
-        // restore value
-        var oldVal = $this.attr('oldVal');
-        $this.removeAttr('oldVal');
-        if(!oldVal) return false;
-        $input.val(oldVal);
-
-        $this.closest('.jqButton').hide();
-        $span.find('.clearFile').closest('.jqButton').show();
-
-        return false;
-    });
-
+	
     // initialize (hide) undo buttons
     $('span.unhideByJs').find('.undoClearFile').closest('.jqButton').hide();
     $('span.unhideByJs').removeClass('foswikiHidden');

@@ -41,13 +41,11 @@ sub renderForEdit {
 
     my $oldFile = $value;
     $oldFile = "<noautolink><input type='text' name='$this->{name}' value='$oldFile' readonly='readonly' size='$size' class='oldFile' /></noautolink>";
-    if($this->{value} =~ m#\bclearable\s*=\s*(?:1|on|yes)\b#) {
-        # TODO: beforeSaveHandler needs to check if file was cleared when this option is off
-        # TODO: Actually delete file?
-        $oldFile .= '<span class="unhideByJs foswikiHidden">%BUTTON{"%MAKETEXT{"Clear file"}%" icon="cross" href="#" class="clearFile"}%%BUTTON{"%MAKETEXT{"undo clear file"}%" icon="arrow_undo" href="#" class="undoClearFile"}%</span>%CLEAR%'; # the js will unhide stuff
+    if($value) {
+        $oldFile .= '<span class="unhideByJs">%BUTTON{"%MAKETEXT{"Clear file"}%" icon="cross" href="#" class="clearFile"}%</span>%CLEAR%'; # the js will unhide stuff
     }
 
-    $value = "<span class='attachmentForm'>".'%MAKETEXT{"Upload a new file:"}%'."<noautolink><input type='file' data-targetweb='\%ENCODE{\"$targetWeb\" type=\"url\"}\%' data-targettopic='\%ENCODE{\"$targetTopic\" type=\"url\"}\%' value='$value' size='$size' /></noautolink></span>%JQREQUIRE{\"blockui,form\"}%";
+    $value = "<span class='attachmentForm'>".'%MAKETEXT{"Upload file:"}%'."<noautolink><input type='file' ref='$this->{name}' name='filepath' data-targetweb='\%ENCODE{\"$targetWeb\" type=\"url\"}\%' data-targettopic='\%ENCODE{\"$targetTopic\" type=\"url\"}\%' value='$value' size='$size' /></noautolink></span>%JQREQUIRE{\"blockui,form\"}%";
 
     Foswiki::Func::addToZone('script', 'Form::Attachment::script', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,jsi18nCore,JQUERYPLUGIN::FORM,JQUERYPLUGIN::BLOCKUI');
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/AttachmentFormfieldPlugin/upload.js"></script>
@@ -59,7 +57,27 @@ SCRIPT
     );
 }
 
+sub renderForDisplay {
+    my ($this, $topicObject, $value) = @_;
 
+	return unless $value;
+	
+	my $ret='<a class="attachmentField" href="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'">'.$value.'</a>';
+	my @attributes  = split(/ /, $this->{value});
+	if ( "image" ~~ @attributes ) {
+		my @size = split(/x/, $this->{size});
+		my $width = @size[0] || "auto";
+		my $height = @size[1] || "auto";
+		$ret = '<img width="'.$width.'" height="'.$height.'" class="attachmentField" src="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'"/>';
+	}
+    return (
+        '',
+        $ret
+    );
+}
+sub isDeleteAttachment {
+ return shift->{attributes} =~ /del/
+}
     1;
     __END__
     Foswiki - The Free and Open Source Wiki, http://foswiki.org/
