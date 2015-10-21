@@ -46,6 +46,12 @@ sub renderForEdit {
     }
 
     $value = "<span class='attachmentForm'>".'%MAKETEXT{"Upload file:"}%'."<noautolink><input type='file' ref='$this->{name}' name='filepath' data-targetweb='\%ENCODE{\"$targetWeb\" type=\"url\"}\%' data-targettopic='\%ENCODE{\"$targetTopic\" type=\"url\"}\%' value='$value' size='$size' /></noautolink></span>%JQREQUIRE{\"blockui,form\"}%";
+	my $ret = "<span class='attachmentField'>$oldFile<br />$value</span>";
+	
+	if(Foswiki::Func::topicExists($targetWeb,$targetTopic) ne 1){
+		$value = "<noautolink><span>".'%MAKETEXT{"Please save first"}%'."</span></noautolink>";
+		$ret = $value;
+	}
 
     Foswiki::Func::addToZone('script', 'Form::Attachment::script', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,jsi18nCore,JQUERYPLUGIN::FORM,JQUERYPLUGIN::BLOCKUI');
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/AttachmentFormfieldPlugin/upload.js"></script>
@@ -53,7 +59,7 @@ SCRIPT
 
     return (
         '',
-        "<span class='attachmentField'>$oldFile<br />$value</span>"
+        $ret
     );
 }
 
@@ -61,7 +67,7 @@ sub renderForDisplay {
     my ($this, $topicObject, $value) = @_;
 
 	return unless $value;
-	
+		
 	my $ret='<a class="attachmentField" href="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'">'.$value.'</a>';
 	my @attributes  = split(/ /, $this->{value});
 	if ( "image" ~~ @attributes ) {
@@ -70,6 +76,7 @@ sub renderForDisplay {
 		my $height = @size[1] || "auto";
 		$ret = '<img width="'.$width.'" height="'.$height.'" class="attachmentField" src="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'"/>';
 	}
+
     return (
         '',
         $ret
