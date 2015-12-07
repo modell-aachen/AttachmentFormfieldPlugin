@@ -11,12 +11,17 @@ One line description, required for extensions repository catalog.
 
 ---++ Usage
 Use type =attachment= in a form.
-If old attachments should be deleted add "removeold" to the 'values' column. To render an Attachment as image add "image".
-You can define the size of an image by adding it to the size-column (eg '200x200'), otherwise the width and height is set to 'auto'.
+
+This formfield supports a few parameters, which can be added to the values-column of the definition:
+| Parameter | Description |
+| =removeold= | When an attachment gets updated, the old attachment will be deleted (moved to =%TRASHWEB%/TrashAttachments=) |
+| =image= | To render an attachment as an image. %BR% You can define the size of the image by adding it to the size-column (eg '200x200'), otherwise the width and height is set to 'auto'. |
+| =allownewtopic= | Allow uploading to new (not yet existing) topics. The topic name must not contain an =AUTOINC=. |
 
 Example:
 
-| AttachmentImage | attachment  | 300x300 | removeold  |  |  |
+| *Name* | *Type* | *Size* | *Values* | *Tooltip message* | *Attributes* |
+| !AttachmentImage | attachment  | 300x300 | removeold  | Your beautiful image |  |
 
 
 ---++ Installation

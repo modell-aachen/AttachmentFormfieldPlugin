@@ -48,9 +48,11 @@ sub renderForEdit {
     $value = "<span class='attachmentForm'>".'%MAKETEXT{"Upload file:"}%'."<noautolink><input type='file' ref='$this->{name}' name='filepath' data-targetweb='\%ENCODE{\"$targetWeb\" type=\"url\"}\%' data-targettopic='\%ENCODE{\"$targetTopic\" type=\"url\"}\%' value='$value' size='$size' /></noautolink></span>%JQREQUIRE{\"blockui,form\"}%";
     my $ret = "<span class='attachmentField'>$oldFile<br />$value</span>";
 
-    if(Foswiki::Func::topicExists($targetWeb,$targetTopic) ne 1){
-        $value = "<noautolink><span>".'%MAKETEXT{"Please save first"}%'."</span></noautolink>";
-        $ret = $value;
+    unless(Foswiki::Func::topicExists($targetWeb,$targetTopic)){
+        if($targetTopic =~ m#AUTOINC\d+# || not $this->{value} =~ m#\ballownewtopic\b#) {
+            $value = "<noautolink><span>".'%MAKETEXT{"Please save first"}%'."</span></noautolink>";
+            $ret = $value;
+        }
     }
 
     Foswiki::Func::addToZone('script', 'Form::Attachment::script', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,jsi18nCore,JQUERYPLUGIN::FORM,JQUERYPLUGIN::BLOCKUI');
