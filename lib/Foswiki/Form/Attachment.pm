@@ -27,15 +27,19 @@ sub getDefaultValue {
 sub renderForEdit {
     my ($this, $topicObject, $value) = @_;
 
-    my $request = Foswiki::Func::getRequestObject();
-    if($request->param('templatetopic')) {
-        undef $value;
-    }
-
-    my $size = 50; # TODO
-
     my $targetWeb = $topicObject->web;
     my $targetTopic = $topicObject->topic;
+    my $size = 50; # TODO
+
+    my $request = Foswiki::Func::getRequestObject();
+    if($request->param('templatetopic') || !Foswiki::Func::topicExists($targetWeb, $targetTopic)) {
+        if($targetTopic =~ m#AUTOINC# || (not $this->{value} =~ m#\ballownewtopic\b# && $targetTopic eq ($request->param('templatetopic') || ''))) {
+            $value = "<noautolink><span>".'%MAKETEXT{"Please save first"}%'."</span></noautolink>";
+            return ( '', $value );
+        }
+
+        undef $value;
+    }
 
     $value ||= '';
 
@@ -47,13 +51,6 @@ sub renderForEdit {
 
     $value = "<span class='attachmentForm'>".'%MAKETEXT{"Upload file:"}%'."<noautolink><input type='file' ref='$this->{name}' name='filepath' data-targetweb='\%ENCODE{\"$targetWeb\" type=\"url\"}\%' data-targettopic='\%ENCODE{\"$targetTopic\" type=\"url\"}\%' value='$value' size='$size' /></noautolink></span>%JQREQUIRE{\"blockui,form\"}%";
     my $ret = "<span class='attachmentField'>$oldFile<br />$value</span>";
-
-    unless(Foswiki::Func::topicExists($targetWeb,$targetTopic)){
-        if($targetTopic =~ m#AUTOINC\d+# || not $this->{value} =~ m#\ballownewtopic\b#) {
-            $value = "<noautolink><span>".'%MAKETEXT{"Please save first"}%'."</span></noautolink>";
-            $ret = $value;
-        }
-    }
 
     Foswiki::Func::addToZone('script', 'Form::Attachment::script', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,jsi18nCore,JQUERYPLUGIN::FORM,JQUERYPLUGIN::BLOCKUI');
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/AttachmentFormfieldPlugin/upload.js"></script>
