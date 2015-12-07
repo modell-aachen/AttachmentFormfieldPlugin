@@ -70,10 +70,10 @@ sub renderForDisplay {
 		
 	my $ret='<a class="attachmentField" href="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'">'.$value.'</a>';
 	my @attributes  = split(/ /, $this->{value});
-	if ( "image" ~~ @attributes ) {
+	if ( scalar grep { $_ eq "image" } @attributes ) {
 		my @size = split(/x/, $this->{size});
-		my $width = @size[0] || "auto";
-		my $height = @size[1] || "auto";
+		my $width = $size[0] || "auto";
+		my $height = $size[1] || "auto";
 		$ret = '<img width="'.$width.'" height="'.$height.'" class="attachmentField" src="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'"/>';
 	}
 

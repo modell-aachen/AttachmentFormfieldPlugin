@@ -134,7 +134,7 @@ sub beforeSaveHandler {
 			  my $name = $fieldDef->{name};
 			  my $type = $fieldDef->{type};
 			  my @attributes  = split(/ /, $values);
-			  if ( "removeold" ~~ @attributes ) {
+			  if ( scalar grep { $_ eq "removeold" } @attributes ) {
 				$removeOldOne = 1;
 			  }
 			  if ($type eq 'attachment') {
