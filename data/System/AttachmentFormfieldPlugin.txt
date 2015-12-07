@@ -14,7 +14,7 @@ Use type =attachment= in a form.
 
 This formfield supports a few parameters, which can be added to the values-column of the definition:
 | Parameter | Description |
-| =removeold= | When an attachment gets updated, the old attachment will be deleted (moved to =%TRASHWEB%/TrashAttachments=) |
+| =removeold= | When an attachment gets updated, the old attachment will be deleted (moved to =%TRASHWEB%/TrashAttachments=). %BR% Known bug: If you select a new file and then press 'cancel', the new file will not be removed. |
 | =image= | To render an attachment as an image. %BR% You can define the size of the image by adding it to the size-column (eg '200x200'), otherwise the width and height is set to 'auto'. |
 | =allownewtopic= | Allow uploading to new (not yet existing) topics. The topic name must not contain an =AUTOINC=. |
 | =clearable= | Set to =1=, =yes= or =on= to add a _clear_ button (sets the file to _empty_). |
