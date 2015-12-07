@@ -45,7 +45,7 @@ sub renderForEdit {
 
     my $oldFile = $value;
     $oldFile = "<noautolink><input type='text' name='$this->{name}' value='$oldFile' readonly='readonly' size='$size' class='oldFile' /></noautolink>";
-    if($value) {
+    if($value && $this->{value} =~ m#\bclearable\s*=\s*(?:1|on|yes)\b#) {
         $oldFile .= '<span class="unhideByJs">%BUTTON{"%MAKETEXT{"Clear file"}%" icon="cross" href="#" class="clearFile"}%</span>%CLEAR%'; # the js will unhide stuff
     }
 
