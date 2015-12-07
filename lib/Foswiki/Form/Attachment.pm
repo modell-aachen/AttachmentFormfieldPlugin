@@ -66,23 +66,22 @@ SCRIPT
 }
 
 sub renderForDisplay {
-    my ($this, $topicObject, $value) = @_;
+    my ($this, $format, $value, $attrs) = @_;
 
-    return unless $value;
+    my $ret = $value;
 
-    my $ret='<a class="attachmentField" href="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'">'.$value.'</a>';
-    my @attributes  = split(/ /, $this->{value});
-    if ( scalar grep { $_ eq "image" } @attributes ) {
-        my @size = split(/x/, $this->{size});
-        my $width = $size[0] || "auto";
-        my $height = $size[1] || "auto";
-        $ret = '<img width="'.$width.'" height="'.$height.'" class="attachmentField" src="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'"/>';
+    if($ret) {
+        $ret='<a class="attachmentField" href="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'">'.$value.'</a>';
+        my @attributes  = split(/ /, $this->{value});
+        if ( scalar grep { $_ eq "image" } @attributes ) {
+            my @size = split(/x/, $this->{size});
+            my $width = $size[0] || "auto";
+            my $height = $size[1] || "auto";
+            $ret = '<img width="'.$width.'" height="'.$height.'" class="attachmentField" src="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'"/>';
+        }
     }
 
-    return (
-        '',
-        $ret
-    );
+    return $this->SUPER::renderForDisplay($format, $ret, $attrs);
 }
 
 sub isDeleteAttachment {
