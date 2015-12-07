@@ -46,12 +46,12 @@ sub renderForEdit {
     }
 
     $value = "<span class='attachmentForm'>".'%MAKETEXT{"Upload file:"}%'."<noautolink><input type='file' ref='$this->{name}' name='filepath' data-targetweb='\%ENCODE{\"$targetWeb\" type=\"url\"}\%' data-targettopic='\%ENCODE{\"$targetTopic\" type=\"url\"}\%' value='$value' size='$size' /></noautolink></span>%JQREQUIRE{\"blockui,form\"}%";
-	my $ret = "<span class='attachmentField'>$oldFile<br />$value</span>";
-	
-	if(Foswiki::Func::topicExists($targetWeb,$targetTopic) ne 1){
-		$value = "<noautolink><span>".'%MAKETEXT{"Please save first"}%'."</span></noautolink>";
-		$ret = $value;
-	}
+    my $ret = "<span class='attachmentField'>$oldFile<br />$value</span>";
+
+    if(Foswiki::Func::topicExists($targetWeb,$targetTopic) ne 1){
+        $value = "<noautolink><span>".'%MAKETEXT{"Please save first"}%'."</span></noautolink>";
+        $ret = $value;
+    }
 
     Foswiki::Func::addToZone('script', 'Form::Attachment::script', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,jsi18nCore,JQUERYPLUGIN::FORM,JQUERYPLUGIN::BLOCKUI');
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/AttachmentFormfieldPlugin/upload.js"></script>
@@ -66,49 +66,52 @@ SCRIPT
 sub renderForDisplay {
     my ($this, $topicObject, $value) = @_;
 
-	return unless $value;
-		
-	my $ret='<a class="attachmentField" href="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'">'.$value.'</a>';
-	my @attributes  = split(/ /, $this->{value});
-	if ( scalar grep { $_ eq "image" } @attributes ) {
-		my @size = split(/x/, $this->{size});
-		my $width = $size[0] || "auto";
-		my $height = $size[1] || "auto";
-		$ret = '<img width="'.$width.'" height="'.$height.'" class="attachmentField" src="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'"/>';
-	}
+    return unless $value;
+
+    my $ret='<a class="attachmentField" href="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'">'.$value.'</a>';
+    my @attributes  = split(/ /, $this->{value});
+    if ( scalar grep { $_ eq "image" } @attributes ) {
+        my @size = split(/x/, $this->{size});
+        my $width = $size[0] || "auto";
+        my $height = $size[1] || "auto";
+        $ret = '<img width="'.$width.'" height="'.$height.'" class="attachmentField" src="%PUBURLPATH%/%WEB%/%TOPIC%/'.$value.'"/>';
+    }
 
     return (
         '',
         $ret
     );
 }
+
 sub isDeleteAttachment {
- return shift->{attributes} =~ /del/
+    return shift->{attributes} =~ /del/
 }
-    1;
-    __END__
-    Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 
-    Copyright (C) 2013-2014 Foswiki Contributors. Foswiki Contributors
-    are listed in the AUTHORS file in the root of this distribution.
-    NOTE: Please extend that file, not this notice.
+1;
 
-    Additional copyrights apply to some or all of the code in this
-    file as follows:
+__END__
+Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 
-    Copyright (C) 2001-2007 TWiki Contributors. All Rights Reserved.
-    TWiki Contributors are listed in the AUTHORS file in the root
-    of this distribution. NOTE: Please extend that file, not this notice.
+Copyright (C) 2013-2014 Foswiki Contributors. Foswiki Contributors
+are listed in the AUTHORS file in the root of this distribution.
+NOTE: Please extend that file, not this notice.
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version. For
-    more details read LICENSE in the root of this distribution.
+Additional copyrights apply to some or all of the code in this
+file as follows:
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+Copyright (C) 2001-2007 TWiki Contributors. All Rights Reserved.
+TWiki Contributors are listed in the AUTHORS file in the root
+of this distribution. NOTE: Please extend that file, not this notice.
 
-    As per the GPL, removal of this notice is prohibited.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version. For
+more details read LICENSE in the root of this distribution.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+As per the GPL, removal of this notice is prohibited.
 

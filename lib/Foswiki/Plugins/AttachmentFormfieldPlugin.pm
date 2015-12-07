@@ -31,11 +31,11 @@ sub initPlugin {
             __PACKAGE__, ' and Plugins.pm' );
         return 0;
     }
-	my %opts = (
-		authenticate => 1,
-		validate => 0,
-		http_allow => 'POST'
-	);
+    my %opts = (
+        authenticate => 1,
+        validate => 0,
+        http_allow => 'POST'
+    );
     Foswiki::Func::registerRESTHandler('upload', \&_restUpload, %opts );
 }
 
@@ -59,20 +59,20 @@ sub _restUpload {
     my $fileComment = $query->param('filecomment') || '';
     my $filePathParam = $query->param('filepath');
     my $fileName = $query->param('filename');
-	
+
     if ( $filePathParam && !$fileName ) {
         $filePathParam =~ m#([^/\\]*$)#;
         $fileName = $1;
     }
-	
-	$fileName =~ s/ä/ae/g;
-	$fileName =~ s/ö/oe/g;
-	$fileName =~ s/ü/üe/g;
-	$fileName =~ s/Ä/Ae/g;
-	$fileName =~ s/Ö/Oe/g;
-	$fileName =~ s/Ü/Ue/g;
-	$fileName =~ s/ß/sz/g;
-	
+
+    $fileName =~ s/ä/ae/g;
+    $fileName =~ s/ö/oe/g;
+    $fileName =~ s/ü/üe/g;
+    $fileName =~ s/Ä/Ae/g;
+    $fileName =~ s/Ö/Oe/g;
+    $fileName =~ s/Ü/Ue/g;
+    $fileName =~ s/ß/sz/g;
+
     return 'ERROR: Missing filename' unless $fileName;
 
     my $stream = $query->upload('filepath');
@@ -100,65 +100,65 @@ sub _restUpload {
 
 sub beforeSaveHandler {
     my ( $text, $topic, $web, $meta ) = @_;
-	
-	 # process form
-	my $formName = $meta->getFormName();
-	my $fieldname;
-	my $removeOldOne = 0;
-	if ($formName) {
-		# read form definition to add field type hints
-		my $formDef;
-		try {
-		  $formDef = new Foswiki::Form($Foswiki::Plugins::SESSION, $web, $formName);
-		}
-		catch Foswiki::OopsException with {
-		  # Form definition not found, ignore
-		  my $e = shift;
-		  Foswiki::Func::writeWarning("ERROR: can't read form definition for $formName");
-		} catch Foswiki::AccessControlException with {
-		  # Form definition not accessible, ignore
-		  my $e = shift;
-		  Foswiki::Func::writeWarning("ERROR: can't access form definition for $formName");
-		};
 
-		$formName =~ s/\//\./g;
+     # process form
+    my $formName = $meta->getFormName();
+    my $fieldname;
+    my $removeOldOne = 0;
+    if ($formName) {
+        # read form definition to add field type hints
+        my $formDef;
+        try {
+          $formDef = new Foswiki::Form($Foswiki::Plugins::SESSION, $web, $formName);
+        }
+        catch Foswiki::OopsException with {
+          # Form definition not found, ignore
+          my $e = shift;
+          Foswiki::Func::writeWarning("ERROR: can't read form definition for $formName");
+        } catch Foswiki::AccessControlException with {
+          # Form definition not accessible, ignore
+          my $e = shift;
+          Foswiki::Func::writeWarning("ERROR: can't access form definition for $formName");
+        };
 
-		if ($formDef) {    # form definition found, if not the formfields aren't indexed
+        $formName =~ s/\//\./g;
 
-		  my %seenFields = ();
-		  my $formFields = $formDef->getFields();
-		  if ($formFields) {
-			foreach my $fieldDef (@{$formFields}) {
-			  my $attrs = $fieldDef->{attributes};    
-			  my $values = $fieldDef->{value};
-			  my $name = $fieldDef->{name};
-			  my $type = $fieldDef->{type};
-			  my @attributes  = split(/ /, $values);
-			  if ( scalar grep { $_ eq "removeold" } @attributes ) {
-				$removeOldOne = 1;
-			  }
-			  if ($type eq 'attachment') {
-				$fieldname = $name;
-				last;
-			  }
-			}
-		  }
-		}
-	}
-	if($removeOldOne){
-		my $fieldnew = $meta->get('FIELD',$fieldname);
-		
-		my ($old,undef) = Foswiki::Func::readTopic($web,$topic);
-		my $fieldold = $old->get('FIELD',$fieldname);
-		
-		if($fieldold && $fieldold->{value} ne $fieldnew->{value}){
-			#my $file = $Foswiki::cfg{PubDir}.'/'.$web.'/'.$topic.'/'.$fieldold->{value};
-			#unlink $file;
-			deleteAttachment($web,$topic,$fieldold->{value});
-			my $fileAttachment = $meta->remove('FILEATTACHMENT',$fieldold->{value});
-		}
-	}
-	
+        if ($formDef) {    # form definition found, if not the formfields aren't indexed
+
+          my %seenFields = ();
+          my $formFields = $formDef->getFields();
+          if ($formFields) {
+            foreach my $fieldDef (@{$formFields}) {
+              my $attrs = $fieldDef->{attributes};
+              my $values = $fieldDef->{value};
+              my $name = $fieldDef->{name};
+              my $type = $fieldDef->{type};
+              my @attributes  = split(/ /, $values);
+              if ( scalar grep { $_ eq "removeold" } @attributes ) {
+                $removeOldOne = 1;
+              }
+              if ($type eq 'attachment') {
+                $fieldname = $name;
+                last;
+              }
+            }
+          }
+        }
+    }
+    if($removeOldOne){
+        my $fieldnew = $meta->get('FIELD',$fieldname);
+
+        my ($old,undef) = Foswiki::Func::readTopic($web,$topic);
+        my $fieldold = $old->get('FIELD',$fieldname);
+
+        if($fieldold && $fieldold->{value} ne $fieldnew->{value}){
+            #my $file = $Foswiki::cfg{PubDir}.'/'.$web.'/'.$topic.'/'.$fieldold->{value};
+            #unlink $file;
+            deleteAttachment($web,$topic,$fieldold->{value});
+            my $fileAttachment = $meta->remove('FILEATTACHMENT',$fieldold->{value});
+        }
+    }
+
 }
 # Delete attachment - by renaming it to Trash/TrashAttachment
 sub deleteAttachment {
@@ -169,7 +169,7 @@ sub deleteAttachment {
     {
         $n++;
     }
-	Foswiki::Func::moveAttachment( $web, $topic, $attachment, $Foswiki::cfg{TrashWebName}, "TrashAttachment", $attachment.$n );
+    Foswiki::Func::moveAttachment( $web, $topic, $attachment, $Foswiki::cfg{TrashWebName}, "TrashAttachment", $attachment.$n );
 }
 
 1;
